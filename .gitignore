@@ -1,0 +1,9 @@
+*.exe
+*.in
+*.out
+*.test
+*.sol
+*.log
+
+Task/
+test.cpp
