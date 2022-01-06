@@ -7,3 +7,6 @@
 
 Task/
 test.cpp
+
+*.zip
+*.tar
