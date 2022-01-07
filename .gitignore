@@ -5,7 +5,6 @@
 *.sol
 *.log
 
-Task/
 test.cpp
 
 *.zip
