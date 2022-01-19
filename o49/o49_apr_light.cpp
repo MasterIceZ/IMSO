@@ -21,38 +21,33 @@ const int MxN = 100100;
 vector<int> c;
 
 struct LazySeg{
-	pair<int, int> operator + (const pair<int, int> a, const pair<int, int> b){
-		return pair<int, int>(a.first + b.first, a.second + b.second);
-	}
-	pair<int, int> tree[4 * MxN];
 	bool lazy[4 * MxN];
-	void build(int l, int r, int now){
-		if(l == r){
-			tree[now] = pair<int, int>(v[l - 1] - v[l], 0);
+	int tree[4 * MxN];
+	void push(int now, int l, int r){
+		if(!lazy[now]){
 			return ;
 		}
-		int mid = (l + r) >> 1;
-		build(l, mid, now * 2);
-		build(mid + 1, r, now * 2 + 1);
-		tree[now] = tree[now * 2] + tree[now];
-	}
-	void lzy(int now){
-		if(lazy[now]){
-			lazy[now * 2] ^= true;
-			lazy[now * 2 + 1] ^= true;
-			swap(tree[now].first, tree[now].second);
-			lazy[now] = false;
+		tree[now] = (c[r + 1] - c[l]) - tree[now];
+		if(l < r){
+			lazy[now * 2] ^= 1;
+			lazy[now * 2 + 1] ^= 1;
 		}
+		lazy[now] = false;
 	}
-	void update(int l, int r, int wl, int wr, int v, int now){
-		if(l > r || wl > r || wr < l){
+	void update(int l, int r, int wl, int wr, int now){
+		push(now, l, r);
+		if(l > r || l > wr || r < wl){
 			return ;
 		}
 		if(wl <= l && r <= wr){
-			tree[now] = ;
+			lazy[now] = true;
+			push(now, l, r);
 			return ;
 		}
-		lzy(now);
+		int mid = (l + r) >> 1;
+		update(l, mid, wl, wr, now * 2);
+		update(mid + 1, r, wl, wr, now * 2 + 1);
+		tree[now] = tree[now * 2] + tree[now * 2 + 1];
 	}
 } seg;
 
@@ -69,7 +64,11 @@ void solve(){
 	}
 	sort(c.begin(), c.end());
 	c.resize(unique(c.begin(), c.end()) - c.begin());
-	for(int i=1; i<=n; ++i){}
+	for(auto x: query){
+		int idx = lower_bound(c.begin(), c.end(), x) - c.begin();
+		seg.update(1, c.size() - 2, idx, c.size() - 1, 2);
+		cout << n - seg.tree[1] << "\n";
+	}
 	return ;
 }
 
@@ -79,7 +78,6 @@ int main(){
 //	cin >> q;
 	while(q--){
 		solve();
-		cout << "\n";
 	}
 	return 0;
 }
