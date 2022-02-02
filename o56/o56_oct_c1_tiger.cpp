@@ -30,13 +30,10 @@ void solve(){
 		cin >> x >> y;
 		int min_dist = INT_MAX;
 		for(auto a: fire){
-			min_dist = min(min_dist, abs(a.first - x) + abs(a.second - y));
+			min_dist = min(min_dist, abs(x - a.first) + abs(y - a.second));
 		}
 		mp[min_dist] += 1;
-		if(mp[min_dist] > current){
-			answer = min_dist;
-			current = mp[min_dist];
-		}
+		answer = max(answer, mp[min_dist]);
 	}
 	cout << answer ;
 	return ;

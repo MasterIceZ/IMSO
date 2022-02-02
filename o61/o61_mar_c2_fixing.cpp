@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		: o51_virus
- * ALGO		: Greedy
- * DATE		: 28 Jan 2022
+ * TASK		: o61_mar_c2_fixing
+ * ALGO		: 
+ * DATE		:
  * */
 #include<bits/stdc++.h>
 using namespace std;
@@ -17,22 +17,23 @@ using namespace std;
 using ll = long long;
 
 void solve(){
-	int n;
-	cin >> n;
-	vector<int> a(n), b(n);
-	for(auto &x: a){
+	int n, m, k, x;
+	cin >> n >> m >> k;
+	vector<int> v;
+	int last = 0, cnt = 0;
+	for(int i=1; i<=m; ++i){
 		cin >> x;
+		if(i != 1 && last + 1 != x){
+			v.push_back(x - last - 1);
+			cnt += v.back();
+		}
+		last = x;
 	}
-	for(auto &x: b){
-		cin >> x;
+	sort(v.begin(), v.end(), greater<int>());
+	for(int i=0; i<k-1 && i<v.size(); ++i){
+		cnt -= v[i];
 	}
-	sort(a.begin(), a.end());
-	sort(b.begin(), b.end(), greater<int>());
-	int answer = 0;
-	for(int i=0; i<n; ++i){
-		answer = max(answer, min(a[i], b[i]));
-	}
-	cout << answer; 
+	cout << cnt;
 	return ;
 }
 

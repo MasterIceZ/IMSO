@@ -18,31 +18,45 @@ using ll = long long;
 
 const int MxN = 30030;
 vector<int> adj[MxN];
-queue<int> q;
-int dist[MxN];
 
-int dijkstra(int source, int sink){
-	while(!q.empty()){
-		q.pop();
-	}
-	memset(dist, -1, sizeof dist);
-	q.push(source);
-	dist[source] = 0;
-	while(!q.empty()){
-		int now = q.front();
-		q.pop();
-		if(now == sink){
-			return dist[now];
+int level[MxN];
+pair<int, int> dp[MxN][16];
+
+void dfs(int u, int p, int lv){
+	level[u] = lv;
+	dp[u][0].first = p;
+	for(auto x: adj[u]){
+		if(x == p){
+			continue;
 		}
-		for(auto x: adj[now]){
-			if(dist[x] != -1){
-				continue;
-			}
-			dist[x] = dist[now] + 1;
-			q.push(x);
+		dp[x][0].second = 1;
+		dfs(x, u, lv + 1);
+	}
+}
+
+int lca(int u, int v){
+	int res = 0;
+	if(level[u] > level[v]){
+		swap(u, v);
+	}
+	for(int state=15; state>=0; --state){
+		if(level[u] > level[dp[v][state].first]){
+			continue;
+		}
+		v = dp[v][state].first;
+		res += dp[v][state].second;
+	}
+	if(u == v){
+		return res;
+	}
+	for(int state=15; state>=0; --state){
+		if(dp[u][state].first != dp[v][state].first){
+			u = dp[u][state].first;
+			v = dp[v][state].first;
+			res += dp[u][state].second + dp[v][state].second;
 		}
 	}
-	return dist[sink];
+	return res + dp[u][0].second + dp[v][0].second;
 }
 
 void solve(){
@@ -50,16 +64,23 @@ void solve(){
 	cin >> n;
 	for(int i=2; i<=n; ++i){
 		cin >> u >> v;
-		adj[u].push_back(v);
-		adj[v].push_back(u);
+		adj[u].emplace_back(v);
+		adj[v].emplace_back(u);
+	}
+	dfs(1, 0, 1);
+	for(int state=1; state<=15; ++state){
+		for(int i=1; i<=n; ++i){
+			dp[i][state].first = dp[dp[i][state - 1].first][state - 1].first;
+			dp[i][state].second = dp[i][state - 1].second + dp[dp[i][state - 1].first][state - 1].second;
+		}
 	}
 	cin >> q;
-	int source = 1;
+	u = 1;
 	int answer = 0;
 	while(q--){
-		cin >> x;
-		answer += dijkstra(source, x);
-		source = x;
+		cin >> v;
+		answer += lca(u, v);
+		u = v;
 	}
 	cout << answer;
 	return ;

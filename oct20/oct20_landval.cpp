@@ -43,7 +43,7 @@ void solve(){
 		cin >> a;
 		if(a == 1){
 			cin >> b >> c >> d;
-			fw.update(a, d);
+			fw.update(b, d);
 			fw.update(c+1, -d);
 		}
 		else{

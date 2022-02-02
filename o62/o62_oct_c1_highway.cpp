@@ -30,10 +30,16 @@ struct Directed_Graph{
 		visited[u] = true;
 		for(auto x: adj[u]){
 			if(x == p || closed[x] || visited[x]){
-				return ;
+				continue ;
 			}
 			dfs(x, u);
 		}
+	}
+	vector<int> get(int node){
+		return adj[node];
+	}
+	bool go(int node){
+		return visited[node];
 	}
 } adj, rev;
 
@@ -61,13 +67,13 @@ void solve(){
 		query.pop();
 		if(now.first == 1){
 			closed[now.second] = false;
-			for(auto x: rev.adj[now.second]){
+			for(auto x: rev.get(now.second)){
 				if(!adj.visited[x]){
 					continue;
 				}
 				adj.dfs(x, 0);
 			}
-			for(auto x: adj.adj[now.second]){
+			for(auto x: adj.get(now.second)){
 				if(!rev.visited[x]){
 					continue;
 				}
@@ -75,7 +81,7 @@ void solve(){
 			}
 		}
 		else{
-			answer.push(adj.visited[now.second] && rev.visited[now.second]);
+			answer.push(adj.go(now.second) && rev.go(now.second));
 		}
 	}
 	while(!answer.empty()){

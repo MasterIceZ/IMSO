@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		: o51_virus
- * ALGO		: Greedy
- * DATE		: 28 Jan 2022
+ * TASK		: oct21_inc2
+ * ALGO		: Dynamic Programming
+ * DATE		: 1 Feb 2022
  * */
 #include<bits/stdc++.h>
 using namespace std;
@@ -19,20 +19,18 @@ using ll = long long;
 void solve(){
 	int n;
 	cin >> n;
-	vector<int> a(n), b(n);
-	for(auto &x: a){
+	vector<int> lis;
+	for(int i=1, x; i<=n; ++i){
 		cin >> x;
+		int idx = lower_bound(lis.begin(), lis.end(), x) - lis.begin();
+		if(idx == lis.size()){
+			lis.push_back(x);
+		}
+		else{
+			lis[idx] = x;
+		}
 	}
-	for(auto &x: b){
-		cin >> x;
-	}
-	sort(a.begin(), a.end());
-	sort(b.begin(), b.end(), greater<int>());
-	int answer = 0;
-	for(int i=0; i<n; ++i){
-		answer = max(answer, min(a[i], b[i]));
-	}
-	cout << answer; 
+	cout << lis.size();
 	return ;
 }
 

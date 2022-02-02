@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		: o51_virus
- * ALGO		: Greedy
- * DATE		: 28 Jan 2022
+ * TASK		: o55_sortpair
+ * ALGO		: Sorting
+ * DATE		: 1 Feb 2022
  * */
 #include<bits/stdc++.h>
 using namespace std;
@@ -19,20 +19,14 @@ using ll = long long;
 void solve(){
 	int n;
 	cin >> n;
-	vector<int> a(n), b(n);
-	for(auto &x: a){
-		cin >> x;
+	vector<pair<int, int>> v(n);
+	for(auto &x: v){
+		cin >> x.first >> x.second;
 	}
-	for(auto &x: b){
-		cin >> x;
+	sort(v.begin(), v.end());
+	for(auto x: v){
+		cout << x.first << " " << x.second << "\n";
 	}
-	sort(a.begin(), a.end());
-	sort(b.begin(), b.end(), greater<int>());
-	int answer = 0;
-	for(int i=0; i<n; ++i){
-		answer = max(answer, min(a[i], b[i]));
-	}
-	cout << answer; 
 	return ;
 }
 

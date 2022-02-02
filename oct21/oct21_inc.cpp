@@ -16,22 +16,37 @@ using namespace std;
 
 using ll = long long;
 
+int a[1010];
+int dp[1010], p[1010];
+
 void solve(){
 	int n, x;
 	cin >> n;
-	vector<int> lis;
+	int maxx = 0, maxx_idx = -1;
 	for(int i=1; i<=n; ++i){
-		cin >> x;
-		int idx = lower_bound(lis.begin(), lis.end(), x) - lis.begin();
-		if(idx == lis.size()){
-			lis.push_back(x);
+		cin >> a[i];
+		dp[i] = 1;
+		for(int j=1; j<i; ++j){
+			if(dp[i] < dp[j] + 1 && a[j] < a[i]){
+				dp[i] = dp[j] + 1;
+				p[i] = j;
+			}
 		}
-		else{
-			lis[idx] = x;
+		if(maxx < dp[i]){
+			maxx = dp[i];
+			maxx_idx = i;
 		}
 	}
-	cout << lis.size() << "\n";
-	for(int i=1;
+	stack<int> st;
+	while(maxx_idx != 0){
+		st.push(a[maxx_idx]);
+		maxx_idx = p[maxx_idx];
+	}
+	cout << st.size() << "\n";
+	while(!st.empty()){
+		cout << st.top() << " ";
+		st.pop();
+	}
 	return ;
 }
 
