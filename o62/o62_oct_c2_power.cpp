@@ -29,7 +29,7 @@ struct SegTree{
 			return ;
 		}
 		if(l == r){
-			tree[idx] = l * (mi ? 1: -1);
+			tree[idx] = l * (mi ? -1: 1);
 			return ;
 		}
 		int mid = (l + r) >> 1;
@@ -73,17 +73,19 @@ void solve(){
 	seg1.build();
 	seg2.build();
 	int a, b;
-	ll c, res = -1e9 - 100;
+	ll c, res = 0;
 	while(q--){
 		cin >> a >> b >> c;
 		ll x = max(seg1.read(1, a) - a, seg2.read(a, n) + a) + c;
-		ll y = max(seg1.read(1, b) - b, seg2.read(a, n) + b) + c;
+		ll y = max(seg1.read(1, b) - b, seg2.read(b, n) + b) + c;
+		dbg(x, seg1.read(1, a) - a, seg2.read(a, n) + a);
+		dbg(y, seg1.read(1, b) - b, seg2.read(b, n) + b);
 		res = max({res, x, y});
 		cout << res << "\n";
-		seg1.update(a, y + a);
 		seg1.update(b, x + b);
-		seg2.update(a, y - a);
 		seg2.update(b, x - b);
+		seg1.update(a, y + a);
+		seg2.update(a, y - a);
 	}
 	return ;
 }

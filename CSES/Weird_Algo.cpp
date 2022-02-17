@@ -17,7 +17,18 @@ using namespace std;
 using ll = long long;
 
 void solve(){
-	
+	int x;
+	cin >> x;
+	cout << x;
+	while(x != 1){
+		if(x & 1){
+			x = 3 * x + 1;
+		}
+		else{
+			x >>= 1;
+		}
+		cout << " " << x;
+	}
 	return ;
 }
 

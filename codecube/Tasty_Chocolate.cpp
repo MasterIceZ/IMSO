@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		: Salary Queries
- * ALGO		: 
- * DATE		: 6 Jan 2022
+ * TASK		: Tasty Chocolate
+ * ALGO		: Dynamic Programming 
+ * DATE		: 10 Feb 2022
  * */
 #include<bits/stdc++.h>
 using namespace std;
@@ -16,24 +16,24 @@ using namespace std;
 
 using ll = long long;
 
-#include <ext/pb_ds/assoc_container.hpp>
-using namespace __gnu_pbds;
-
-tree<pair<int, int>, null_type, less<int>, rb_tree_tag, tree_order_statistics_nod_update> st;
-
-const int MxN = 200100;
-int a[MxN];
+const int MxN = 1010;
+int dp[MxN][3030], a[MxN];
 
 void solve(){
-	int n, q;
-	cin >> n >> q;
+	int n;
+	cin >> n;
 	for(int i=1; i<=n; ++i){
 		cin >> a[i];
-		st.insert({a[i], i});
+		dp[i][0] = 1e9 + 100;
 	}
+	for(int i=1; i<=n; ++i){
+		for(int j=1; j<=3000; ++j){
+			dp[i][j] = min(dp[i][j - 1], dp[i - 1][j - 1] + (a[i] != j));
+		}
+	}
+	cout << dp[n][3000];
 	return ;
 }
-
 int main(){
 	cin.tie(nullptr)->ios::sync_with_stdio(false);
 	int q = 1;
