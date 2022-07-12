@@ -9,3 +9,6 @@ test.cpp
 
 *.zip
 *.tar
+
+buffer.txt
+input.txt
