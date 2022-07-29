@@ -35,17 +35,4 @@ public:
 	}
 };
 
-template<size_t S>
-class t_bitset {
-private:
-	std::array<t_bit, S + 1024> arr;
-public:
-	operator [](const size_t x){
-		return arr[x];
-	}
-	operator = (const size_t x){
-
-	}
-};
-
 #endif
