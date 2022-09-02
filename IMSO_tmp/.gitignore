@@ -1,0 +1,16 @@
+*.exe
+*.in
+*.out
+*.test
+*.sol
+*.log
+
+test.cpp
+
+*.zip
+*.tar
+
+buffer.txt
+input.txt
+
+*.txt
