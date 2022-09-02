@@ -1,0 +1,76 @@
+/*
+ * AUTHOR	: Hydrolyzed~
+ * SCHOOL	: RYW
+ * TASK		:
+ * ALGO		:
+ * DATE		:
+ * */
+#include<bits/stdc++.h>
+using namespace std;
+
+#define endl "\n"
+#define all(x) (x).begin(), (x).end()
+
+#ifdef _DEBUG
+#include "template.hpp"
+#else
+#define dbg(...) 0
+#endif
+
+using ll = long long;
+
+bool isVowel(char s){
+	if(s == 'A' || s == 'E' || s == 'I' || s == 'O' || s == 'U'){
+		return true;
+	}
+	return false;
+}
+
+void solve(){
+	string s;
+	cin >> s;
+	map<char, int> mp;
+	for(auto x: s){
+		mp[x]++;
+	}
+	vector<pair<int, char>> v;
+	for(auto x: mp){
+		v.emplace_back(x.second, x.first);
+	}
+	sort(v.begin(), v.end(), greater<pair<int, char>>());
+	int vowel = 0, con = 0;
+	char naxV, naxC;
+	for(auto x: v){
+		if(isVowel(x.second)){
+			if(vowel == 0){
+				naxV = x.second;
+			}
+			vowel += x.first;
+		}
+		else{
+			if(con == 0){
+				naxC = x.second;
+			}
+			con += x.first;
+		}
+	}
+	int remainV = vowel - mp[naxV];
+	int remainC = con - mp[naxC];
+//	cerr << "DBG : " << naxV << ", " << naxC << "\n";
+//	cerr << "DBG : " << remainV << ", " << remainC << "\n";
+//	cerr << remainV + 2 * con << " " << remainC + 2 * vowel << "\n";
+	cout << min(2 * remainV  + con, 2 * remainC + vowel);
+	return ;
+}
+
+int main(){
+	cin.tie(nullptr)->ios::sync_with_stdio(false);
+	int q = 1;
+	cin >> q;
+	for(int i=1; i<=q; ++i){
+		cout << "Case #" << i << ": " ;
+		solve();
+		cout << endl;
+	}
+	return 0;
+}
