@@ -12,3 +12,5 @@ test.cpp
 
 buffer.txt
 input.txt
+
+*.txt
