@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		:
- * ALGO		:
- * DATE		:
+ * TASK		: o63_jun19_colorblind
+ * ALGO		: Interavtive
+ * DATE		: 20 Sep 2022
  * */
 
 #include <bits/stdc++.h>
@@ -36,5 +36,24 @@ template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_ta
 using ll = long long;
 
 std::string investivate_colors(int N) {
-	return "RB";
+//	if(N == 1){
+//		return "RB";
+//	}
+//	if(N == 2){
+//		if(use_device(0, 1) == 4){
+//			return "RRBB";
+//		}
+//		if(use_device(1, 2) == 4){
+//			return "RBRB";
+//		}
+//		return "RBBR";
+//	}
+	string res = "";
+	for(int i=1; i<=N; ++i){
+		res = res + "R";
+	}
+	for(int i=1; i<=N; ++i){
+		res = res + "B";
+	}
+	return res;
 }
