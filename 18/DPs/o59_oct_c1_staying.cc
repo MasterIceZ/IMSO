@@ -1,92 +1,69 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		: Staying Salesman
- * ALGO		: Dynamic Programming
- * DATE		: 22 Sep 2022
+ * TASK		: o59_oct_c1_staying
+ * ALGO		: Dynamic Programming with Bitmasks, Travelling Salesman Problem
+ * DATE		: 9 Oct 2022
  * */
-
-#include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <ext/rope>
-
-#ifndef _DEBUG
-// @==== Libary ====@ //
-
-// @================@ //
-#endif
-
+#include<bits/stdc++.h>
 using namespace std;
-using namespace __gnu_pbds;
-using namespace __gnu_cxx;
 
-template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
-
-// @=== Debugger ===@ //
 #ifdef _DEBUG
-#include "debug.hpp"
+#include "template.hpp"
 #else
 #define dbg(...) 0
 #endif
-// @================@ //
 
 using ll = long long;
 
-const int MxN = 1010;
-const ll MOD = 1e9 + 7;
+int n, k[5];
 vector<int> adj[5];
-int can_stay[5];
-// dp(date, town, stay, mask)
-ll dp[MxN][5][MxN][1 << 3];
+int dp[1010][5][1010][1 << 3];
+const int MOD = 1e9 + 7;
 
-inline void solution(){
-	int n;
-	cin >> n;
-	for(int i=0; i<3; ++i){
-		cin >> can_stay[i];
-	}
-	dp[1][0][1][1] = 1ll;
-	for(int day=2; day<=n; ++day){
-		for(int mask=1; mask<(1 << 3); ++mask){
-			for(int to=0; to<3; ++to){
-				// stay here
-				for(int stay=1; stay<=can_stay[to]; ++stay){
-					dp[day][to][stay][mask | (1 << to)] = (dp[day][to][stay][mask | (1 << to)] + dp[day - 1][to][stay - 1][mask]) % MOD;
+void solve(){
+	cin >> n >> k[0] >> k[1] >> k[2];
+	dp[1][0][1][1] = 1;
+	adj[1].push_back(0);
+	adj[2].push_back(1);
+	adj[0].push_back(2);
+	adj[2].push_back(0);
+	for(int i=2; i<=n; ++i){
+		for(int state=1; state<(1 << 3); ++state){
+			for(int u=0; u<3; ++u){
+				// stay
+				for(int j=1; j<=k[u]; ++j){
+					dp[i][u][j][state | (1 << u)] += dp[i - 1][u][j - 1][state];
+					dp[i][u][j][state | (1 << u)] %= MOD;
 				}
-				// travel from other
-				for(auto from: adj[to]){
-					for(int last_stay=1; last_stay<=can_stay[from]; ++last_stay){
-						dp[day][to][1][mask | (1 << to)] = (dp[day][to][1][mask | (1 << to)] + dp[day - 1][from][last_stay][mask]) % MOD;
+				// from other
+				for(auto x: adj[u]){
+					for(int j=1; j<=k[x]; ++j){
+						dp[i][u][1][state | (1 << u)] += dp[i - 1][x][j][state];
+						dp[i][u][1][state | (1 << u)] %= MOD;
 					}
 				}
 			}
 		}
 	}
-	ll res = 0ll;
-	for(int node=0; node<3; ++node){
-		for(int stay=1; stay<=can_stay[node]; ++stay){
-			res = (res + dp[n][node][stay][(1 << 3) - 1]) % MOD;
+	int answer = 0;
+	for(int i=0; i<3; ++i){
+		for(int j=1; j<=k[i]; ++j){
+			answer += dp[n][i][j][7];
+			answer %= MOD;
 		}
 	}
-	cout << res;
+	cout << answer;
 	return ;
 }
 
-signed main(){
-	
-	adj[0].emplace_back(1);
-	adj[1].emplace_back(2);
-	adj[0].emplace_back(2);
-	adj[2].emplace_back(0);
-
-	cin.tie(nullptr)->ios::sync_with_stdio(false);	
+int main(){
+	cin.tie(nullptr)->ios::sync_with_stdio(false);
 	int q = 1;
 //	cin >> q;
 	while(q--){
-		solution();
+		solve();
 		cout << "\n";
 	}
 	return 0;
 }
-// https://github.com/MasterIceZ/archive/tree/main/cpp-template
