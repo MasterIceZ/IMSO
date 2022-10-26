@@ -35,144 +35,106 @@ using ll = long long;
 
 struct Edge{
 	int u, v, w;
-	bool operator < (const Edge& o) const {
-		return w < o.w;
-	}	
 	Edge(int _u, int _v, int _w):
 		u(_u), v(_v), w(_w) {}
+	bool operator < (const Edge& o) const {
+		return w < o.w;
+	}
 };
 
-const int MxN = 550 * 550;
-
-vector<Edge> edges, unused;
-vector<pair<int, int>> adj[MxN], adj2[MxN];
-set<int> vertex;
-int max_vertex, parent[MxN], sz[MxN], level[MxN];
-pair<int, int> lift[MxN][22];
+const int MxN = 440 * 440;
+const int LgN = __lg(MxN) + 10;
+int n, m, max_id, parent[MxN], dp[MxN][LgN], wei[MxN][LgN], level[MxN];
+vector<Edge> edges, out;
+vector<pair<int, int>> adj[MxN];
 
 inline int get_id(int i, int j){
-	return i * 419 + j;
-}
-
-inline void add_edge(int a_i, int a_j, int b_i, int b_j, int w){
-	int u = get_id(a_i, a_j), v = get_id(b_i, b_j);
-	edges.emplace_back(u, v, w);
-	adj[u].emplace_back(v, w);
-	adj[v].emplace_back(u, w);
-	vertex.emplace(u);
-	vertex.emplace(v);
-	max_vertex = max({max_vertex, u, v});
-	return ;
+	max_id = max(max_id, i * 400 + j);
+	return i * 400 + j;
 }
 
 int find_root(int u){
-	while(u != parent[u]){
-		u = parent[u];
-	}
-	return u;
+	return u == parent[u] ? u: parent[u] = find_root(parent[u]);
 }
 
-void unite(int u, int v){
-	int ru = find_root(u);
-	int rv = find_root(v);
-	if(ru == rv){
-		return ;
-	}
-	if(sz[ru] > sz[rv]){
-		parent[rv] = ru;
-		sz[ru] = max(sz[ru], sz[rv] + 1);
-	}
-	else{
-		parent[ru] = rv;
-		sz[rv] = max(sz[rv], sz[ru] + 1);
-	}
-}
-
-void dfs(int u, int p){
+void dfs_level(int u, int p, int w){
 	level[u] = level[p] + 1;
-	lift[u][0].first = p;
-	for(auto x: adj2[u]){
-		if(x.first == p){
+	wei[u][0] = w;
+	dp[u][0] = p;
+	for(auto x: adj[u]){
+		if(x.first == p || level[u]){
 			continue;
 		}
-		lift[x.first][0].second = x.second;
-		dfs(x.first, u);
+		dfs_level(x.first, u, x.second);
 	}
+}
+
+inline int get_lca(int u, int v){
+	if(level[u] > level[v]){
+		swap(u, v);
+	}
+	int res = 0;
+	for(int state=20; state>=0; --state){
+		if(level[u] < level[dp[v][state]]){
+			continue;
+		}
+		res = max(res, wei[v][state]);
+		v = dp[v][state];
+	}
+	if(v == u){
+		return res;
+	}
+	for(int state=20; state>=0; --state){
+		if(dp[u][state] == dp[v][state]){
+			continue;
+		}
+		res = max({res, wei[v][state], wei[u][state]});
+		u = dp[u][state];
+		v = dp[v][state];
+	}
+	return max({res, wei[v][0], wei[u][0]});
 }
 
 inline void solution(){
-	int n, m, w;
-	cin >> n >> m;
-	for(int i=2; i<=m; ++i){
-		cin >> w;
-		add_edge(1, i - 1, 1, i, w);
-	}
-	for(int i=2; i<=n; ++i){
-		for(int j=1; j<=m; ++j){
-			cin >> w;
-			add_edge(i - 1, j, i, j, w);
+	cin >> m >> n;
+	for(int i=0, x; i<2*n-1; ++i){
+		if(i % 2){
+			for(int j=0; j<m; ++j){
+				cin >> x;
+				edges.emplace_back(get_id(i / 2, j), get_id(i / 2 + 1, j), x);
+			}
 		}
-		for(int j=2; j<=m; ++j){
-			cin >> w;
-			add_edge(i, j - 1, i, j, w);
+		else{
+			for(int j=0; j<n-1; ++j){
+				cin >> x;
+				edges.emplace_back(get_id(i / 2, j), get_id(i / 2, j + 1), x);
+			}
 		}
-	}
-	assert(max_vertex < MxN);	
-	for(auto x: vertex){
-		parent[x] = x;
-		sz[x] = 1;
 	}
 	sort(edges.begin(), edges.end());
-	int sum = 0;
+	iota(parent, parent + MxN, 0);
 	for(auto x: edges){
-		int ru = find_root(x.u);
-		int rv = find_root(x.v);
+		int ru = find_root(x.u), rv = find_root(x.v);
 		if(ru == rv){
-			unused.emplace_back(x);
+			out.emplace_back(x);
 			continue;
 		}
-		unite(ru, rv);
-		adj2[ru].emplace_back(rv, x.w);
-		adj2[rv].emplace_back(ru, x.w);
-		sum = sum + x.w;
+		adj[x.u].emplace_back(x.v, x.w);
+		adj[x.v].emplace_back(x.u, x.w);
+		parent[ru] = rv;
 	}
-	level[0] = 1;
-	// dfs in MST
-	dfs(get_id(1, 1), 0);
-	for(int state=1; state<=19; ++state){
-		for(auto x: vertex){
-			lift[x][state].first = lift[lift[x][state - 1].first][state - 1].first;
-			lift[x][state].second = max(lift[x][state - 1].second, lift[lift[x][state - 1].first][state - 1].second);
+	dfs_level(0, 0, 0);
+	for(int state=0; state<=20; ++state){
+		for(int i=0; i<max_id; ++i){
+			dp[i][state] = dp[dp[i][state - 1]][state - 1];
+			wei[i][state] = max(wei[dp[i][state - 1]][state - 1], wei[i][state - 1]);
 		}
 	}
-	int answer = 1e9;
-	for(auto x: unused){
-		int u = x.u, v = x.v;
-		int maxx = 0;
-		if(level[u] > level[v]){
-			swap(u, v);
-		}
-		for(int state=19; state>=0; --state){
-			if(level[lift[v][state].first] < level[u]){
-				continue;
-			}
-			maxx = max(maxx, lift[v][state].second);
-			v = lift[v][state].first;
-		}
-		if(u != v){
-			for(int state=19; state>=0; --state){
-				if(lift[v][state].first != lift[u][state].second){
-					continue;
-				}
-				maxx = max({maxx, lift[u][state].second, lift[v][state].second});
-				u = lift[u][state].first;
-				v = lift[v][state].first;
-			}
-			maxx = max({maxx, lift[u][0].second, lift[v][0].second});
-		}
-		answer = min(answer, -maxx + x.w);
+	int res = 0;
+	for(auto x: out){
+		res = max(res, x.w - get_lca(x.u, x.v));
 	}
-	cout << answer;
+	cout << res;
 	return ;
 }
 
