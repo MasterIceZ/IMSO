@@ -107,6 +107,16 @@ template<class T> string to_string(priority_queue<T> pq, string sep=", "){
 	return to_string(vt, sep);
 }
 
+template<class T, class U> string to_string(vector<pair<T, U>> v, string sep=", "){
+	vector<string> vt;
+	string tt;
+	for(auto x: v){
+		tt = "(" + to_string(x.first) + ", " + to_string(x.second) + ")";
+		vt.emplace_back(tt);
+	}
+	return to_string(vt, sep);
+}
+
 void DBG(){
 	cerr << "]\n";
 }
