@@ -1,70 +1,93 @@
+// dp on Tree
 #include <bits/stdc++.h>
 
 using namespace std;
 
-map<string, vector<string>> adj;
-map<string, string> pre;
-map<string, long long> v, dp;
+using path_t = vector<string> ;
+
+path_t current_path;
+map<string, string> previous;
+map<string, vector<string>> following;
+map<string, long long> value, dp;
 map<string, bool> visited;
+long long sum = 0ll;
 
-const long long bound = 100000;
-long long answer = 0ll;
+string create_path(path_t now){
+	string res = "";
+	for(auto x: now){
+		res = res + x + "/";
+	}
+	return res;
+}
 
-void dfs(string u){
-	cerr << "Current: " << u << "\n";
+long long dfs(string u){
+	if(visited[u]){
+		return dp[u];
+	}
 	visited[u] = true;
-	for(auto x: adj[u]){
-		if(visited[x] || v[x]){
+	dp[u] = value[u];
+	for(auto x: following[u]){
+		if(visited[x]){
 			continue;
 		}
-		dfs(x);
+		dp[u] += dfs(x);
 	}
-	long long sum = 0ll;
-	for(auto x: adj[u]){
-		if(visited[x] || !v[x]){
-			continue;
-		}
-		sum += v[x];
-	}
-	if(sum <= bound){
-		answer += sum;
-	}
+	return dp[u];
 }
 
 int main(){
 	freopen("input.txt", "r", stdin);
 	int n = 1027;
-	string it = "";
+	string a, b, c;
 	for(int i=1; i<=n; ++i){
-		string a;
 		cin >> a;
 		if(a == "$"){
-			string b;
 			cin >> b;
 			if(b == "cd"){
-				string c;
 				cin >> c;
-				if(c == ".."){
-					it = pre[it];
+				if(c != ".."){
+					current_path.emplace_back(c);
 				}
 				else{
-					it = c;
+					current_path.pop_back();
 				}
 			}
 		}
 		else{
-			string name;
-			cin >> name;
+			cin >> b;
 			if(a == "dir"){
-				adj[it].emplace_back(name);
-				pre[name] = it;
+				string last = create_path(current_path);
+				path_t next_path = current_path;
+				next_path.emplace_back(b);
+				string current = create_path(next_path);
+				previous[current] = last;
+				following[last].emplace_back(current);
 			}
 			else{
-				v[name] = stoll(a);
+				string current = create_path(current_path);
+				value[current] += stoll(a);
 			}
 		}
 	}
-	dfs("/");
-	cout << answer;
+	string start_point = create_path({"/"});
+	dfs(start_point);
+	vector<long long> vec;
+	for(auto x: dp){
+		if(x.second <= 100000ll){
+			sum += x.second;
+		}
+		vec.emplace_back(x.second);
+	}
+	cout << "Answer #1: " << sum << "\n";
+	vec.emplace_back(0ll);
+	sort(vec.begin(), vec.end());
+	long long all_space = 70000000ll;
+	long long used_space = dp[start_point];
+	cerr << "Used Space : " << used_space << "\n";
+	long long remain = all_space - used_space;
+	long long wanted = 30000000ll;
+	long long erasing = wanted - remain;
+	auto t = lower_bound(vec.begin(), vec.end(), erasing);
+	cout << "Anser #2: " << *t << "\n";
 	return 0;
 }
