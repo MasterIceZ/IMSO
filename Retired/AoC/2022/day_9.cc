@@ -4,7 +4,7 @@ using namespace std;
 
 using pii = pair<int, int> ;
 
-set<pii> st;
+set<pii> st, st2;
 
 const int d8i[] = {-1, -1, -1, 0, 0, 1, 1, 1};
 const int d8j[] = {-1, 0, 1, -1, 1, -1, 0, 1};
@@ -47,6 +47,7 @@ int main(){
 		v[i] = make_pair(1, 1);
 	}
 	st.emplace(1, 1);
+	st2.emplace(1, 1);
 
 	for(int i=1; i<=N; ++i){
 		char o;
@@ -57,7 +58,8 @@ int main(){
 				v[0].first--;
 				for(int j=1; j<=9; ++j){
 					follow(v[j - 1], v[j]);
-					st.emplace(v[9]);
+					st.emplace(v[1]);
+					st2.emplace(v[9]);
 				}
 			}
 		}
@@ -66,7 +68,8 @@ int main(){
 				v[0].first++;
 				for(int j=1; j<=9; ++j){
 					follow(v[j - 1], v[j]);
-					st.emplace(v[9]);
+					st.emplace(v[1]);
+					st2.emplace(v[9]);
 				}
 			}
 		}
@@ -75,7 +78,8 @@ int main(){
 				v[0].second++;
 				for(int j=1; j<=9; ++j){
 					follow(v[j - 1], v[j]);
-					st.emplace(v[9]);
+					st.emplace(v[1]);
+					st2.emplace(v[9]);
 				}
 			}
 		}
@@ -84,13 +88,15 @@ int main(){
 				v[0].second--;
 				for(int j=1; j<=9; ++j){
 					follow(v[j - 1], v[j]);
-					st.emplace(v[9]);
+					st.emplace(v[1]);
+					st2.emplace(v[9]);
 				}
 			}
 		}
 	}
 
 	cout << "Answer #1: " << (int) st.size() << "\n";
+	cout << "Answer #2: " << (int) st2.size() << "\n";
 	
 	return 0;
 }
