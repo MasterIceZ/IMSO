@@ -14,3 +14,4 @@ buffer.txt
 input.txt
 
 *.txt
+*.o
