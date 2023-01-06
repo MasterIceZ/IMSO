@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		:
- * ALGO		:
- * DATE		:
+ * TASK		: Disaster Dragon
+ * ALGO		: Fenwick Tree
+ * DATE		: 6 Jan 2023
  * */
 
 #include <bits/stdc++.h>
@@ -33,61 +33,76 @@ template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_ta
 
 using ll = long long;
 
-struct Node{
-	int v1, v2, l, r;
-};
-
 const int MxN = 100010;
-int n, q, a, b;
-Node t[MxN << 2];
 
-Node merge_node(Node a, Node b){
-	Node res;
-	res.l = a.l;
-	res.r = b.r;
-	res.v1 = min({a.v1, a.v2, b.v1, b.v2});
-	res.v2 = max({a.v1, a.v2, b.v1, b.v2});
-	return res;
-}
+struct fenwick_tree{
+	ll t[MxN];
+	void update(int idx, ll v){
+		for(; idx<MxN; idx+=idx&-idx){
+			t[idx] = t[idx] + v;
+		}
+	}
+	ll read(int idx){
+		ll res = 0ll;
+		for(; idx; idx-=idx&-idx){
+			res = res + t[idx];
+		}
+		return res;
+	}
+} fw;
 
-void build(int l, int r, int idx){
-	if(l > r){
-		return ;
-	}
-	if(l == r){
-		t[idx].l = l;
-		t[idx].r = r;
-		return ;
-	}
-	int mid = (l + r) >> 1;
-	build(l, mid, idx << 1);
-	build(mid + 1, r, idx << 1 | 1);
-	t[idx] = merge_node(t[idx << 1], t[idx << | 1]);
-}
-
-void push_lazy(int l, int r, int idx){
-	t[idx].v = 
-	if(l == r){
-		return ;
-	}
-	lazy[idx << 1] = ;
-	lazy[idx << 1 | 1] = ;
-}
-
-void update(int l, int r, int wl, int wr, int v, int idx){
-	push_lazy(l, r, idx);
-	if(l > r || r < wl || l > wr){
-		return ;
-	}
-	if(wl <= l && r <= wr){
-		t[idx].l ;
-		lazy[idx] = ;
-	}
-}
+ll d;
 
 inline void solution(){
+	int n, q, a, b, x, c;
 	cin >> n >> q >> a >> b;
-	while(l
+	for(int i=1; i<=q; ++i){
+		cin >> d >> x >> c;
+		if(d == 1){
+			fw.update(1, c);
+			fw.update(x + 1, -c);
+		}
+		else{
+			fw.update(x, -c);
+			fw.update(n + 1, c);
+		}
+		int l = 1, r = n, le = 1, ri = n;
+		while(l < r){
+			int mid = (l + r + 1) >> 1;
+			dbg(l, mid, r);
+			(fw.read(mid) >= a) ? (l = mid): (r = mid - 1);
+		}
+		if(l && fw.read(l) >= a){
+			ri = l;
+		}
+		else{
+			ri = 0;
+		}
+		l = 1, r = n;
+		while(l < r){
+			int mid = (l + r) >> 1;
+			dbg(l, mid, r);
+			(fw.read(mid) <= b) ? (r = mid): (l = mid + 1);
+		}
+		if(l != n + 1 && fw.read(l) <= b){
+			le = l;
+		}
+		else{
+			le = n + 1;
+		}
+		dbg(le, ri);
+		if(ri < le){
+			cout << "-1\n";
+		}
+		else{
+			if(le == ri){
+				cout << le << "\n";
+			}
+			else{
+				cout << le << " " << ri << "\n";
+			}
+		}
+	}
 	return ;
 }
 
