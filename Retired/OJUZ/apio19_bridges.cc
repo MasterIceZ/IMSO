@@ -33,39 +33,79 @@ template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_ta
 
 using ll = long long;
 
-struct query_t{
-	int t, a, b;
-	query_t(int _t, int _a, int _b):
-		t(_t), a(_a), b(_b) {}
-	bool operator < (const query_t & o) const {
-		// compare ?
-	}
+const int MxE = 100010;
+const int MxN = 50050;
+const int SQ = 1000;
+
+struct edge_t{
+	int u, v, w;
 };
 
-const int MxN = 50050;
-map<pair<int, int>, int> edge;
-int parent[MxN], sz[MxN];
+struct query_t{
+	int o, x, y;
+	query_t(int _o, int _x, int _y):
+		o(_o), x(_x), y(_y) {}
+};
 
-int find_root(int u){
-	w
-}
+struct disjoint_set_t{
+	vector<int> parent, sz;
+	stack<pair<int, int>> operations; // (from, to)
+	
+	int find_root(int u){
+		while(u != parent[u]){
+			u = parent[u];
+		}
+		return u;
+	}
+	void unite(int u, int v){
+		int ru = find_root(u), rv = find_root(v);
+		if(ru == rv){
+			return ;
+		}
+		if(sz[rv] > sz[ru]){
+			swap(ru, rv);
+		}
+		sz[ru] += sz[rv];
+		parent[rv] = ru;
+		st.emplace(rv, ru);
+	}
+	void rollback(){
+		while(!st.empty()){
+			pair<int, int> now = operations.top(); operations.pop();
+			sz[now.second] -= sz[now.first];
+			parent[now.first] = now.first;
+		}
+	}
+	void init(int n){
+		parent.resize(n + 1);
+		sz.resize(n + 1);
+		for(int i=1; i<=n; ++i){
+			parent[i] = i;
+			sz[i] = 1;
+		}
+	}
+	disjoint_set_t() {}
+};
+
+int n, m, q;
+edge_t edges[MxE];
+vector<query_t> queries;
+bitset<MxQ> change;
 
 inline void solution(){
-	int n, m;
 	cin >> n >> m;
 	for(int i=1; i<=m; ++i){
-		cin >> u >> v >> w;
-		pair<int, int> currnet_edge = minmax(u, v);
-		edge[current_edge] = w;
+		cin >> edges[i].u >> edges[i].v >> edges[i].w;
 	}
-	int q, t, a, b;
 	cin >> q;
-	int k = sqrt(q);
 	for(int i=1; i<=q; ++i){
-		cin >> t >> a >> b;
-		if(i % k == 0){
-
-		}
+		cin >> o >> x >> y;
+		queries.emplace_back(o, x, y);
+	}
+	for(int i=0; i<q; ++i){
+		int l = i, r = min(q - 1, i + SQ - 1);
+		change = 0;
+		dsu.init();
 	}
 	return ;
 }
