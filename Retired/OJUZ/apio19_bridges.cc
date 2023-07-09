@@ -33,79 +33,132 @@ template <typename T> using ordered_set = tree<T, null_type, less<T>, rb_tree_ta
 
 using ll = long long;
 
-const int MxE = 100010;
 const int MxN = 50050;
-const int SQ = 1000;
+const int MxM = 100010;
+const int MxQ = 100010;
+const int SqQ = 1010;
 
-struct edge_t{
-	int u, v, w;
+struct query_t {
+	int t, x, y;
+	query_t(int _t, int _x, int _y):
+		t(_t), x(_x), y(_y) {}
+	query_t():
+		t(-1), x(-1), y(-1) {}
 };
 
-struct query_t{
-	int o, x, y;
-	query_t(int _o, int _x, int _y):
-		o(_o), x(_x), y(_y) {}
-};
+int parent[MxN], sz[MxN], u[MxM], v[MxM], w[MxM], answer[MxQ];
+query_t query[MxQ];
+vector<int> process[SqQ], update_query, read_query, line;
+bitset<MxN> update;
+stack<int> operations;
 
-struct disjoint_set_t{
-	vector<int> parent, sz;
-	stack<pair<int, int>> operations; // (from, to)
-	
-	int find_root(int u){
-		while(u != parent[u]){
-			u = parent[u];
-		}
-		return u;
+bool compareReadQuery(int a, int b) {
+	return query[a].y > query[b].y;
+}
+
+bool compareWeight(int a, int b) {
+	return w[a] > w[b];
+}
+
+int find_root(int u) {
+	while(u != parent[u]) {
+		u = parent[u];
 	}
-	void unite(int u, int v){
-		int ru = find_root(u), rv = find_root(v);
-		if(ru == rv){
-			return ;
-		}
-		if(sz[rv] > sz[ru]){
-			swap(ru, rv);
-		}
-		sz[ru] += sz[rv];
-		parent[rv] = ru;
-		st.emplace(rv, ru);
+	return u;
+}
+
+void unite(int a, int b) {
+	int ra = find_root(a), rb = find_root(b);
+	if(ra == rb) {
+		return ;
 	}
-	void rollback(){
-		while(!st.empty()){
-			pair<int, int> now = operations.top(); operations.pop();
-			sz[now.second] -= sz[now.first];
-			parent[now.first] = now.first;
-		}
+	if(sz[ra] > sz[rb]) {
+		parent[rb] = ra;
+		sz[ra] += sz[rb];
+		operations.emplace(rb);
 	}
-	void init(int n){
-		parent.resize(n + 1);
-		sz.resize(n + 1);
-		for(int i=1; i<=n; ++i){
+	else {
+		parent[ra] = rb;
+		sz[rb] += sz[ra];
+		operations.emplace(ra);
+	}
+}
+
+inline void solution(){
+	int n, m, q;
+	cin >> n >> m;
+	for(int i=1; i<=m; ++i) {
+		cin >> u[i] >> v[i] >> w[i];
+	}
+	cin >> q;
+	for(int i=1; i<=q; ++i) {
+		cin >> query[i].t >> query[i].x >> query[i].y;
+	}
+	for(int l=1; l<=q; l+=SqQ) {
+		int r = min(q, l + SqQ - 1);
+		for(int i=1; i<=n; ++i) {
 			parent[i] = i;
 			sz[i] = 1;
 		}
+		update = 0;
+		update_query.clear();
+		read_query.clear();
+		line.clear();
+		
+		for(int i=l; i<=r; ++i) {
+			if(query[i].t == 1) {
+				update_query.emplace_back(i);
+				update[query[i].x] = true;
+			}
+			else {
+				read_query.emplace_back(i);
+			}
+		}
+		for(int i=1; i<=m; ++i) {
+			if(update[i]) {
+				continue;
+			}
+			line.emplace_back(i);
+		}
+		for(int i=l; i<=r; ++i) {
+			if(query[i].t == 1) {
+				w[query[i].x] = query[i].y;
+			}
+			else {
+				process[i - l].clear();
+				for(auto x: update_query) {
+					if(w[query[x].x] < query[i].y) {
+						continue;
+					}
+					process[i - l].emplace_back(x);
+				}
+			}
+		}
+		sort(read_query.begin(), read_query.end(), compareReadQuery);
+		sort(line.begin(), line.end(), compareWeight);
+		int pt = 0;
+		for(auto x: read_query) {
+			int idx = query[x].x, val = query[x].y;
+			while(pt < (int) line.size() && w[line[pt]] >= val) {
+				unite(u[line[pt]], v[line[pt]]);
+				pt++;
+			}
+			int cnt_rollback = operations.size();
+			for(auto merging: process[x - l]) {
+				unite(u[query[merging].x], v[query[merging].y]);
+			}
+			answer[x] = sz[find_root(idx)];
+			while(!operations.empty() && (int) operations.size() > cnt_rollback) {
+				int cur = operations.top(); operations.pop();
+				sz[parent[cur]] -= sz[cur];
+				parent[cur] = cur;
+			}
+		}
 	}
-	disjoint_set_t() {}
-};
-
-int n, m, q;
-edge_t edges[MxE];
-vector<query_t> queries;
-bitset<MxQ> change;
-
-inline void solution(){
-	cin >> n >> m;
-	for(int i=1; i<=m; ++i){
-		cin >> edges[i].u >> edges[i].v >> edges[i].w;
-	}
-	cin >> q;
-	for(int i=1; i<=q; ++i){
-		cin >> o >> x >> y;
-		queries.emplace_back(o, x, y);
-	}
-	for(int i=0; i<q; ++i){
-		int l = i, r = min(q - 1, i + SQ - 1);
-		change = 0;
-		dsu.init();
+	for(int i=1; i<=q; ++i) {
+		if(query[i].t == 2) {
+			cout << answer[i] << "\n";
+		}
 	}
 	return ;
 }
@@ -116,7 +169,7 @@ signed main(){
 //	cin >> q;
 	while(q--){
 		solution();
-		cout << "\n";
+		//cout << "\n";
 	}
 	return 0;
 }
