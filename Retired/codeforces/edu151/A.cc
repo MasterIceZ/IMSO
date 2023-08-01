@@ -34,14 +34,33 @@ using namespace std;
 using ll = long long;
 
 inline void solution(){
-
+	int n, k, x;
+	cin >> n >> k >> x;
+	if(x != 1) {
+		for(int i=1; i<=n; ++i) {
+			cout << 1 << " ";
+		}
+		return ;
+	}
+	if(n % 2 == 0) {
+		for(int i=2; i<=n; i+=2) {
+			cout << 2 << " ";
+		}
+	}
+	else {
+		int twos = (n - 3) / 2;
+		cout << "3 ";
+		while(twos--) {
+			cout << "2 ";
+		}
+	}
 	return ;
 }
 
 signed main(){
 	cin.tie(nullptr)->ios::sync_with_stdio(false);	
 	int q = 1;
-//	cin >> q;
+	cin >> q;
 	while(q--){
 		solution();
 		cout << "\n";

@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		:
- * ALGO		:
- * DATE		:
+ * TASK		: B-Partition
+ * ALGO		: Search by Elimination
+ * DATE		: 13 Jul 2023
  * */
 
 #include <bits/stdc++.h>
@@ -33,8 +33,42 @@ using namespace std;
 
 using ll = long long;
 
-inline void solution(){
+const int MxN = 1010;
 
+int n, k;
+int a[MxN];
+
+inline bool check(int mid) {
+	int cnt = 1, sum = a[1];
+	for(int i=2; i<=n; ++i) {
+		if(sum + a[i] > mid) {
+			cnt = cnt + 1;
+			sum = a[i];
+		}
+		else {
+			sum = sum + a[i];
+		}
+	}
+	return (cnt <= k);
+}
+
+inline void solution(){
+	cin >> n >> k;
+	for(int i=1; i<=n; ++i) {
+		cin >> a[i];
+	}
+	int l = *max_element(a + 1, a + n + 1);
+	int r = accumulate(a + 1, a + n + 1, 0);
+	while(l < r) {
+		int mid = (l + r) >> 1;
+		if(check(mid)) {
+			r = mid;
+		}	
+		else {
+			l = mid + 1;
+		}
+	}
+	cout << l;
 	return ;
 }
 

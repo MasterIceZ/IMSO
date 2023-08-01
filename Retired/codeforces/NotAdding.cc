@@ -33,8 +33,39 @@ using namespace std;
 
 using ll = long long;
 
-inline void solution(){
+const int MxN = 2000020;
+const int MxA = 1000010;
 
+int a[MxN];
+bitset<MxA> have;
+
+inline void solution(){
+	int n, all = 0;
+	cin >> n;
+	for(int i=1; i<=n; ++i) {
+		cin >> a[i];
+		have[a[i]] = true;
+	}
+	for(int i=1; i<=1000000; ++i) {
+		int current_gcd = -1;
+		for(int j=i; j<=1000000; j += i) {
+			if(!have[j]) {
+				continue;
+			}
+			if(current_gcd == -1) {
+				current_gcd = j;
+			}
+			else {
+				current_gcd = __gcd(current_gcd, j);
+			}
+		}
+		// check that can all `i` to the array
+		if(current_gcd != i) {
+			continue;
+		}
+		all += 1;
+	}
+	cout << all - n;
 	return ;
 }
 

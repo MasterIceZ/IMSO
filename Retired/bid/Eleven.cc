@@ -33,15 +33,28 @@ using namespace std;
 
 using ll = long long;
 
-inline void solution(){
+string s;
 
+inline void solution(){
+	cin >> s;
+	ll odd = 0ll, even = 0ll;
+	for(int i=0; i<(int) s.size(); ++i) {
+		if(i & 1) {
+			odd += (s[i] - '0');
+		}
+		else {
+			even += (s[i] - '0');
+		}
+	}
+	ll diff = abs(odd - even);
+	cout << ((diff % 11ll == 0ll) ? "Yes": "No");
 	return ;
 }
 
 signed main(){
 	cin.tie(nullptr)->ios::sync_with_stdio(false);	
 	int q = 1;
-//	cin >> q;
+	cin >> q;
 	while(q--){
 		solution();
 		cout << "\n";

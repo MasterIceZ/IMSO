@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		:
- * ALGO		:
- * DATE		:
+ * TASK		: Tenzing and Ball
+ * ALGO		: 
+ * DATE		: 1 Aug 2023
  * */
 
 #include <bits/stdc++.h>
@@ -33,15 +33,29 @@ using namespace std;
 
 using ll = long long;
 
-inline void solution(){
+const int MxN = 200020;
 
+int n, a[MxN], dp[MxN], slide_min[MxN];
+
+inline void solution(){
+	cin >> n;
+	dp[0] = 0;
+	for(int i=1; i<=n; ++i) {
+		cin >> a[i];
+		slide_min[i] = 1e9 + 100;
+	}
+	for(int i=1; i<=n; ++i) {
+		dp[i] = min(dp[i - 1] + 1, slide_min[a[i]]);
+		slide_min[a[i]]  = min(slide_min[a[i]], dp[i - 1]);
+	}
+	cout << n - dp[n];
 	return ;
 }
 
 signed main(){
 	cin.tie(nullptr)->ios::sync_with_stdio(false);	
 	int q = 1;
-//	cin >> q;
+	cin >> q;
 	while(q--){
 		solution();
 		cout << "\n";

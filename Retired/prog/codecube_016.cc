@@ -1,9 +1,9 @@
 /*
  * AUTHOR	: Hydrolyzed~
  * SCHOOL	: RYW
- * TASK		:
- * ALGO		:
- * DATE		:
+ * TASK		: S-Value
+ * ALGO		: Sorting
+ * DATE		: 13 Jul 2023
  * */
 
 #include <bits/stdc++.h>
@@ -34,7 +34,18 @@ using namespace std;
 using ll = long long;
 
 inline void solution(){
-
+	int n;
+	cin >> n;
+	vector<ll> a(2 * n);
+	for(int i=0; i<2*n; ++i) {
+		cin >> a[i];
+	}
+	sort(a.begin(), a.end());
+	ll answer = 0ll;
+	for(int i=0,j=2*n-1; i<n && j>=n; ++i, --j) {
+		answer = answer + (a[i] * a[j]);
+	}
+	cout << answer;
 	return ;
 }
 

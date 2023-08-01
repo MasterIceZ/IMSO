@@ -34,14 +34,37 @@ using namespace std;
 using ll = long long;
 
 inline void solution(){
-
+	int n;
+	cin >> n;
+	vector<int> a(n), b(n);
+	for(auto &x: a){
+		cin >> x;
+	}
+	for(auto &x: b){
+		cin >> x;
+	}
+	int cnt = 0;
+	if(a == b){
+		cout << 0;
+		return ;
+	}
+	for(int i=0; i<n; ++i){
+		if(a[i] != b[i]){
+			cnt++;
+		}
+	}
+	if(accumulate(a.begin(), a.end(), 0) == accumulate(b.begin(), b.end(), 0)) {
+		cout << 1;
+		return ;
+	}
+	cout << min(cnt, abs(accumulate(a.begin(), a.end(), 0) - accumulate(b.begin(), b.end(), 0)) + 1);
 	return ;
 }
 
 signed main(){
 	cin.tie(nullptr)->ios::sync_with_stdio(false);	
 	int q = 1;
-//	cin >> q;
+	cin >> q;
 	while(q--){
 		solution();
 		cout << "\n";
