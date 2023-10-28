@@ -1,0 +1,18 @@
+#!/bin/bash
+
+FILENAME="checker.cpp"
+
+BINNAME="output"
+
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+CHECKER="${DIR}/${BINNAME}"
+
+LAST_CHECKER="$(stat -c%Y ${DIR}/${FILENAME})"
+LAST_BIN="$(stat -c%Y ${CHECKER} 2> /dev/null)"
+
+if [[ ! -f "${CHECKER}" ]] || [[ $LAST_CHECKER -ge $LAST_BIN ]]; then
+    ( cd "${DIR}" && g++ -std=c++11 -O2 -Wall -Wextra -pedantic -o "${BINNAME}" "${FILENAME}")
+fi
+
+( cd "${DIR}" && "./${BINNAME}" $1 $2 $3 )
