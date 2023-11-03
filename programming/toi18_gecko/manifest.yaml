@@ -1,0 +1,19 @@
+task_id: "toi18_gecko"
+time_limit: 1.0
+memory_limit: 1024
+grouper: "min"
+groups:
+  - full_score: 17.0
+    tests: 4
+  - full_score: 4.0
+    tests: 4
+  - full_score: 6.0
+    tests: 4
+  - full_score: 9.0
+    tests: 6
+  - full_score: 12.0
+    tests: 6
+  - full_score: 11.0
+    tests: 14
+  - full_score: 41.0
+    tests: 2
