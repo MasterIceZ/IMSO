@@ -24,13 +24,10 @@ struct disjoint_set {
 		int ru = find_root(u);
 		int rv = find_root(v);
 		if(sz[ru] > sz[rv]) {
-			parent[rv] = make_pair(ru, t);
-			sz[ru] = sz[ru] + sz[rv];
+			swap(ru, rv);
 		}
-		else {
-			parent[ru] = make_pair(rv, t);
-			sz[rv] = sz[rv] + sz[ru];
-		}
+		parent[ru] = make_pair(rv, t);
+		sz[rv] = sz[ru] + sz[rv];
 	}
 	disjoint_set() {
 		for(int i=1; i<MxN; ++i) {
