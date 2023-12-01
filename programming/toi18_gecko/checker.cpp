@@ -18,7 +18,7 @@ void accepted() {
   exit(0);
 }
 
-string readWord(istream& in) {
+string readWord(ifstream& in) {
   string out;
   if(in >> out) {
     return out;
@@ -26,7 +26,7 @@ string readWord(istream& in) {
   return FAILSTR;
 }
 
-long long readInt(istream& in, long long mn=LLONG_MIN, long long mx=LLONG_MAX, bool flag=false) {
+long long readInt(ifstream& in, long long mn=LLONG_MIN, long long mx=LLONG_MAX, bool flag=false) {
   string s = readWord(in);
   char *p;
   long long tmp = strtoll(s.c_str(), &p, 10);
@@ -37,10 +37,11 @@ long long readInt(istream& in, long long mn=LLONG_MIN, long long mx=LLONG_MAX, b
 }
 
 void dfs(int u, int p, vector<vector<pair<int, int>>> &adj, vector<bool> &visited) {
+	// cerr << "visiting " << u << "\n";
   visited[u] = true;
   for (auto x : adj[u])
   {
-    if(x.first == p) {
+    if(x.first == p || visited[x.first]) {
       continue;
     }
     dfs(x.first, u, adj, visited);
@@ -69,10 +70,8 @@ int main(int argc, char * argv[]) {
       wrong_answer();
     }
   }
-  
   int user_q = readInt(solution_output, 0, m);
   int solution_q = readInt(output_file, 0, m);
-
   if(user_q != solution_q) {
     wrong_answer();
   }
@@ -84,7 +83,7 @@ int main(int argc, char * argv[]) {
     int v = readInt(input_file, 0, n - 1);
     int w = readInt(input_file, 1, 100000);
 
-    weight[make_pair(u, v)] = w;
+    weight[make_pair(u, v)] = weight[make_pair(v, u)] = w;
   }
 
   vector<vector<pair<int, int>>> adj(n);
@@ -92,23 +91,18 @@ int main(int argc, char * argv[]) {
   for (int i = 1; i <= user_q; ++i) {
     int u = readInt(solution_output, 0, n - 1);
     int v = readInt(solution_output, 0, n - 1);
-
-    pair<int, int> edge = make_pair(u, v);
-
-    if(weight.find(edge) == weight.end()) {
-      wrong_answer();
-    }
-
-    adj[u].emplace_back(v, weight[edge]);
-    adj[v].emplace_back(u, weight[edge]);
+    // cerr << "adding edge" << u << " " << v << "\n";
+    adj[u].emplace_back(v, weight[make_pair(u, v)]);
+    adj[v].emplace_back(u, weight[make_pair(v, u)]);
   }
 
-  // dfs from k
+  // dfs from p
   vector<bool> visited(n, false);
-  dfs(k, -1, adj, visited);
+  dfs(p, -1, adj, visited);
 
   for(auto x: gecko) {
     if(!visited[x]) {
+		  // cerr << x << " BUG\n";
       wrong_answer();
     }
   }
