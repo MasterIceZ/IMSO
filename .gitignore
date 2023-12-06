@@ -17,3 +17,7 @@ input.txt
 *.o
 
 Secret/
+
+/.chp/
+*.prob
+*.bin
