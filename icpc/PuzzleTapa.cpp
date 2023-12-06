@@ -9,45 +9,61 @@ const int dj[] = {0, 2, 0, -2};
 struct bipartite_matching {
   int n, m;
   vector<vector<int>> adj;
-  vector<bool> visited;
-  vector<int> l, r;
+  vector<int> l, r, dist, cur;
   void add_edge(int u, int v) {
     adj[u].emplace_back(v);
   }
-  bool try_match(int u) {
-    if(visited[u]) {
-      return false;
-    }
-    visited[u] = true;
-    for(auto v: adj[u]) {
-      if(r[v] != -1 && !try_match(r[v])) {
-        continue;
+  void bfs() {
+    queue<int> q;
+    for(int i=0; i<n; ++i) {
+      if(l[i] == -1) {
+        q.emplace(i);
+        dist[i] = 0;
       }
-      l[u] = v;
-      r[v] = u;
-      return true;
+      else {
+        dist[i] = -1;
+      }
+    }
+    while(!q.empty()) {
+      int now = q.front(); q.pop();
+      for(auto x: adj[now]) {
+        if(r[x] != -1 && dist[r[x]] == -1) {
+          dist[r[x]] = dist[now] + 1;
+          q.emplace(r[x]);
+        }
+      }
+    }
+  }
+  bool dfs(int u) {
+    for(int &i=cur[u]; i<(int) adj[u].size(); ++i) {
+      int v = adj[u][i];
+      if(r[v] == -1 || dist[r[v]] == dist[u] + 1 && dfs(r[v])) {
+        l[u] = v, r[v] = u;
+        return true;
+      }
     }
     return false;
   }
   int max_matching() {
-    int t = 1;
-    while(t--) {
-      visited.resize(n, false);
-      for(int i=0; i<n; ++i) {
-        if(l[i] != -1) {
-          continue;
+    int match = 0;
+    while(1) {
+      bfs();
+      fill(cur.begin(), cur.end(), 0);
+      int cnt = 0;
+      for(int u=0; u<n; ++u) {
+        if(l[u] == -1) {
+          cnt += dfs(u);
         }
-        t |= try_match(i);
       }
+      if(cnt == 0) {
+        break;
+      }
+      match += cnt;
     }
-    int res = 0;
-    for(int i=0; i<l.size(); ++i) {
-      res += (l[i] != -1);
-    }
-    return res;
+    return match;
   }
   bipartite_matching(int _n, int _m):
-    n(_n), m(_m), adj(_n), visited(_n, false), l(_n, -1), r(_m, -1) {}
+    n(_n), m(_m), adj(_n), l(_n, -1), r(_m, -1), dist(_n, 0), cur(_n, 0) {}
 };
 
 char a[MxN << 1][MxN << 1];
