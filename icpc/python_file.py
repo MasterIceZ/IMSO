@@ -1,0 +1,1 @@
+print("yes" if input()[::-1][:3].lower() == "yp." else "no")
