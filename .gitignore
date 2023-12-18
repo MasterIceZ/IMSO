@@ -21,3 +21,5 @@ Secret/
 /.chp/
 *.prob
 *.bin
+
+.DS_Store
