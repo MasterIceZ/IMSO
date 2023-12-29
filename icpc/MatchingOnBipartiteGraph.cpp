@@ -1,7 +1,4 @@
-#pragma once
-
-#include <vector>
-#include <queue>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -64,3 +61,22 @@ struct hopcroft_karp {
   hopcroft_karp(int _n, int _m):
     n(_n), m(_m), adj(_n), l(_n, -1), r(_m, -1), dist(_n, 0), cur(_n, 0) {}
 };
+
+int main() {
+  cin.tie(nullptr)->ios::sync_with_stdio(false);
+  int l, r, m, u, v;
+  cin >> l >> r >> m;
+  hopcroft_karp mbm(l + r, l + r);
+  for(int i=1; i<=m; ++i) {
+    cin >> u >> v;
+    mbm.add_edge(u, v + l);
+  }
+  cout << mbm.max_matching() << "\n";
+  for(int i=0; i<=l; ++i) {
+    if(mbm.l[i] == -1) {
+      continue;
+    }
+    cout << i << " " << mbm.l[i] - l << "\n";
+  }
+  return 0;
+}
