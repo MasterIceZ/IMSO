@@ -1,5 +1,5 @@
-//#include "magic.h"
-#include "magic.cpp"
+#include "magic.h"
+// #include "magic.cpp"
 #include <cassert>
 #include <cstdio>
 #include <vector>
