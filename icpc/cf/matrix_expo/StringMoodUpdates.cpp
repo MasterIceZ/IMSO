@@ -4,6 +4,7 @@ using namespace std;
 
 using ll = long long;
 const ll MOD = 1e9 + 7ll; 
+const int MxN = 200020;
 
 template<ll M,ll root=0>
 struct Mint{
@@ -66,15 +67,6 @@ struct matrix_t:array<array<T, S + 1>, S + 1> {
 			}
 		}
 	}
-	static constexpr matrix_t set_max() {
-		matrix_t res;
-		for(int i=1; i<=(int) S; ++i) {
-			for(int j=1; j<=(int) S; ++j) {
-				res[i][j] = 3e18 + 100ll;
-			}
-		}
-		return res;
-	}
 	static constexpr matrix_t identity() {
 		matrix_t res;
 		for(int i=1; i<=(int) S; ++i) {
@@ -83,11 +75,11 @@ struct matrix_t:array<array<T, S + 1>, S + 1> {
 		return res;
 	}
 	matrix_t operator * (const matrix_t &o) {
-		matrix_t res = set_max();
+		matrix_t res;
 		for(int i=1; i<=(int) S; ++i) {
 			for(int j=1; j<=(int) S; ++j) {
 				for(int k=1; k<=(int) S; ++k) {
-					res[i][j] = min(res[i][j], (*this)[i][k] + o[k][j]);
+					res[i][j] += (*this)[i][k] * o[k][j];
 				}
 			}
 		}
@@ -95,29 +87,77 @@ struct matrix_t:array<array<T, S + 1>, S + 1> {
 	}
 };
 
-signed main(int argc, char *argv[]) {
-	cin.tie(nullptr)->ios::sync_with_stdio(false);
-	int n, m;
-	ll k;
-	cin >> n >> m >> k;
-	matrix_t<ll, 100> base = matrix_t<ll, 100>::set_max();
-	matrix_t<ll, 100> answer = matrix_t<ll, 100>::identity();
-	for(int i=1, u, v, w; i<=m; ++i) {
-		cin >> u >> v >> w;
-		base[u][v] = min(base[u][v], (ll) w);
-	}
-	for(; k>0ll; k>>=1ll, base=base*base) {
-		if(k & 1) {
-			answer = base * answer;
+string s;
+
+matrix_t<mint, 2> create_matrix(char x) {
+	matrix_t<mint, 2> res;
+	for(char cur='A'; cur<='Z'; ++cur) {
+		if(x != cur && x != '?') {
+			continue;
+		}
+		if(cur == 'H') {
+			res[1][2] += 1;
+			res[2][2] += 1;
+		}
+		else if(cur == 'S' || cur == 'D') {
+			res[1][1] += 1;
+			res[2][1] += 1;
+		}
+		else if(cur == 'A' || cur == 'E' || cur == 'I' || cur == 'O' || cur == 'U') {
+			res[1][2] += 1;
+			res[2][1] += 1;
+		}
+		else {
+			res[1][1] += 1;
+			res[2][2] += 1;
 		}
 	}
-	ll res = 3e18 + 100ll;
-	for(int i=1; i<=n; ++i) {
-		for(int j=1; j<=n; ++j) {
-			res = min(res, answer[i][j]);
-		}
-	}
-	cout << (res >= 1e18L + 30ll ? "IMPOSSIBLE": to_string(res)) << "\n";
-	return 0;
+	return res;
 }
 
+struct segment_tree {
+	matrix_t<mint, 2> t[MxN << 2];
+	void build(int l, int r, int idx) {
+		if(l > r) {
+			return ;
+		}
+		if(l == r) {
+			t[idx] = create_matrix(s[l]);
+			return ;
+		}
+		int mid = (l + r) >> 1;
+		build(l, mid, idx << 1);
+		build(mid + 1, r, idx << 1 | 1);
+		t[idx] = t[idx << 1] * t[idx << 1 | 1];
+	}
+	void update(int l, int r, int id, matrix_t<mint, 2> v, int idx) {
+		if(l > r || l > id || r < id) {
+			return ;
+		}
+		if(l == r) {
+			t[idx] = v;
+			return ;
+		}
+		int mid = (l + r) >> 1;
+		update(l, mid, id, v, idx << 1);
+		update(mid + 1, r, id, v, idx << 1 | 1);
+		t[idx] = t[idx << 1] * t[idx << 1 | 1];
+	}
+} seg;
+
+signed main(int argc, char *argv[]) {
+	cin.tie(nullptr)->ios::sync_with_stdio(false);
+	int n, q;
+	cin >> n >> q >> s;
+	s = " " + s;
+	seg.build(1, n, 1);
+	cout << seg.t[1][2][2] << "\n";
+	while(q--) {
+		int pos;
+		char x;
+		cin >> pos >> x;
+		seg.update(1, n, pos, create_matrix(x), 1);
+		cout << seg.t[1][2][2] << "\n";
+	}
+	return 0;
+}

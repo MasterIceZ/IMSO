@@ -57,67 +57,46 @@ template<>
 ll Mint<0ll>::Mod=ll(1e18)+9;
 using mint = Mint<MOD,3>;
 
-template<typename T, size_t S>
-struct matrix_t:array<array<T, S + 1>, S + 1> {
-	matrix_t() {
-		for(int i=1; i<=(int) S; ++i) {
-			for(int j=1; j<=(int) S; ++j) {
-				(*this)[i][j] = 0;
+using matrix_t = vector<vector<mint>>;
+
+matrix_t mul(matrix_t a, matrix_t b) {
+	assert(a[0].size() == b.size());
+	matrix_t res(a.size(), vector<mint> (b[0].size()));
+	for(int i=1; i<(int) a.size(); ++i) {
+		for(int j=1; j<(int) b.size(); ++j) {
+			for(int k=1; k<(int) b[0].size(); ++k) {
+				res[i][j] += a[i][k] * b[k][j];
 			}
 		}
 	}
-	static constexpr matrix_t set_max() {
-		matrix_t res;
-		for(int i=1; i<=(int) S; ++i) {
-			for(int j=1; j<=(int) S; ++j) {
-				res[i][j] = 3e18 + 100ll;
-			}
-		}
-		return res;
-	}
-	static constexpr matrix_t identity() {
-		matrix_t res;
-		for(int i=1; i<=(int) S; ++i) {
-			res[i][i] = 1;
-		}
-		return res;
-	}
-	matrix_t operator * (const matrix_t &o) {
-		matrix_t res = set_max();
-		for(int i=1; i<=(int) S; ++i) {
-			for(int j=1; j<=(int) S; ++j) {
-				for(int k=1; k<=(int) S; ++k) {
-					res[i][j] = min(res[i][j], (*this)[i][k] + o[k][j]);
-				}
-			}
-		}
-		return res;
-	}
-};
+	return res;
+}
 
 signed main(int argc, char *argv[]) {
 	cin.tie(nullptr)->ios::sync_with_stdio(false);
-	int n, m;
-	ll k;
-	cin >> n >> m >> k;
-	matrix_t<ll, 100> base = matrix_t<ll, 100>::set_max();
-	matrix_t<ll, 100> answer = matrix_t<ll, 100>::identity();
-	for(int i=1, u, v, w; i<=m; ++i) {
-		cin >> u >> v >> w;
-		base[u][v] = min(base[u][v], (ll) w);
+	int n, m, q;
+	cin >> n >> m >> q;
+	vector<matrix_t> base(30);
+	base[0].resize(n + 1, vector<mint> (n + 1));
+	for(int i=1, u, v; i<=m; ++i) {
+		cin >> u >> v;
+		base[0][u][v] = 1;
 	}
-	for(; k>0ll; k>>=1ll, base=base*base) {
-		if(k & 1) {
-			answer = base * answer;
+	for(int i=1; i<30; ++i) {
+		base[i] = mul(base[i - 1], base[i - 1]);
+	}
+	while(q--) {
+		int u, v, k;
+		cin >> u >> v >> k;
+		matrix_t answer(2, vector<mint> (n + 1));
+		answer[1][u] = 1;
+		for(int state=0; state<30; ++state) {
+			if(!(k & (1 << state))) {
+				continue;
+			}
+			answer = mul(answer, base[state]);
 		}
+		cout << answer[1][v] << "\n";
 	}
-	ll res = 3e18 + 100ll;
-	for(int i=1; i<=n; ++i) {
-		for(int j=1; j<=n; ++j) {
-			res = min(res, answer[i][j]);
-		}
-	}
-	cout << (res >= 1e18L + 30ll ? "IMPOSSIBLE": to_string(res)) << "\n";
 	return 0;
 }
-
