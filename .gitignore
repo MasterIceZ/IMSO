@@ -23,3 +23,5 @@ Secret/
 *.bin
 
 .DS_Store
+
+c.sh
