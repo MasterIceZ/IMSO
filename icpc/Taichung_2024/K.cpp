@@ -1,4 +1,4 @@
-#pragma GCC optimize("Ofast")
+// #pragma GCC optimize("Ofast")
 // #pragma GCC target("avx2")
 #include <bits/stdc++.h>
 
@@ -104,10 +104,12 @@ signed main(int argc, char *argv[]) {
   
     order[u] = u;
   }
-  mt19937_64 rnd(std::chrono::steady_clock::now().time_since_epoch().count());
-  shuffle(order + 1, order + n + 1, rnd);
+  random_device rd;
+  mt19937 rnd(rd());
+  shuffle(order + 1, order + id + 1, rnd);
   int answer = 1e9 + 100;
-  for(int u=1; u<=id; ++u) {
+  for(int i=1; i<=id; ++i) {
+    int u = order[i];
     if(done[u]) {
       continue;
     }
