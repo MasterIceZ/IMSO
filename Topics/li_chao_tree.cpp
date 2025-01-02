@@ -1,3 +1,6 @@
+#include <algorithm>
+
+using namespace std;
 using ll = long long;
 
 const int MxN = 200020;
@@ -16,7 +19,7 @@ struct LCT {
 
 	void add_line(int l, int r, line_t line, int idx) {
 		int mid = (l + r) >> 1;
-		if(line(mid) > t[idx](m)) {
+		if(line(mid) > t[idx](mid)) {
 			swap(line, t[idx]);
 		}
 		if(line(l) > t[idx](l)) {
@@ -34,4 +37,4 @@ struct LCT {
 		int mid = (l + r) >> 1;
 		return max({t[idx](x), query(l, mid, x, idx << 1), query(mid + 1, r, x, idx << 1 | 1)});
 	}
-}
+};
