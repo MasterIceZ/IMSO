@@ -9,14 +9,12 @@ std::vector<std::pair<int, int>> route(int N, std::vector<int> W) {
 	for(int i=1; i<=(int) W.size(); ++i) {
 		if((int) W.size() - i + 1 + cur > N) {
 			if(out >= cur) {
-				// reset
 				out = 1;
 				cur++;
 			}
 			edges.emplace_back(out++, cur);
 			continue;
 		}
-		// add all
 		for(int j=i; i<=(int) W.size(); ++i) {
 			edges.emplace_back(cur, cur + j - i + 1);
 		}
