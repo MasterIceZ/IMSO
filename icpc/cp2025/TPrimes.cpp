@@ -1,0 +1,1 @@
+// sqrt(n) * sqrt(n) = n and sqrt(n) is prime -> Yes
