@@ -37,6 +37,17 @@ struct disjoint_set_union {
 
 signed main(int argc, char *argv[]) {
   std::cin.tie(nullptr)->std::ios::sync_with_stdio(false);
-  disjoint_set_union dsu(100000);
+  int n, m;
+  std::cin >> n >> m;
+  disjoint_set_union dsu(n);
+	std::vector<std::pair<std::pair<int, int>, int>> v;
+  for(int i=1, x, y; i<=n; ++i) {
+	  std::cin >> x >> y;
+		v.emplace_back(std::make_pair(x, y), i);
+  }
+	std::sort(v.begin(), v.end());
+	for(int i=1; i<=n; ++i) {
+
+	}
   return 0;
 }
